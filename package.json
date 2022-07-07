@@ -28,5 +28,8 @@
     "extends": [
       "./node_modules/standard/eslintrc.json"
     ]
+  },
+  "dependencies": {
+    "styled-components": "^5.3.5"
   }
 }

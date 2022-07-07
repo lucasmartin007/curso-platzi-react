@@ -120,3 +120,161 @@ __6
 "src":"/.*", "dest":"/index.html"
 }]
 }
+
+__
+
+>>npm i react react-dom webpack wepack-cli html-webpack-plugin webpack-dev-server @babel/core @babel/preset-env babel-loader @babel/preset-react standard --save-dev
+
+__8
+
+>>npm install styled-components
+
+**src/index.js
+
+..
+import { App } from "./app";
+
+ReactDOM.render(<App />, document.getElementById("div_app"));
+
+**src/App.js
+
+import React from 'react';
+
+import Category from "./components/Category";
+
+export const App = () => (
+<Category />
+)
+
+**src/components/Category/index.js
+
+import React from 'react';
+
+import { Anchor, Image } from "./styles";
+
+const DEFAULT_IMAGE = 'https://i.imgur.com/dJa0Hpl.jpg';
+
+export const Category = ({ cover = DEFAULT_IMAGE, path, emoji = '?' }) => (
+Anchor href { path }
+Image src { cover }
+{ emoji }
+)
+
+**src/components/Category/styles.js
+
+import styled from 'styled-components';
+
+export const Anchor = styled.a`
+display:flex;
+flex-direction:column;
+text-align:center;
+text-decoration:none;
+width:75px;
+`;
+
+export const Image = styled.img`
+border:1px solid #ddd;
+box-shadow:0px 10px 14px rgba(0,0,0,.2);
+border-radius:50%;
+height:auto;
+overflow:hidden;
+object-fit:cover;
+height:75px;
+width:75px;
+`;
+
+__9
+
+**src/components/ListOfCategories/index.js
+
+import React from "react";
+
+import { Category } from "../Category";
+
+export const ListOfCategories = () => {
+return (
+ul
+{
+[1, 2, 3].map(category => li key { category } <Category />
+}
+)
+};
+
+**src/App.js
+
+..
+import { ListOfCategories }
+import { GlobalStyle }
+
+..
+div
+<GlobalStyle />
+<ListOfCategories />
+
+**src/components/ListOfCategories/styles.js
+
+import styled from "styled-components";
+
+export const List = styled.ul`
+display:flex;
+overflow:scroll;
+width:100%;
+`;
+
+export const Item = styled.li`
+padding 0 8px;
+`;
+
+**src/GlobalStyles.js
+
+import { createGlobalStyles } from "styled-components";
+
+..
+
+__10
+
+**src/components/ListOfCategories/index.js
+
+..
+import { categories } from "../../../api/db.json";
+
+..
+categories.map(category => Item key {category.id} <Category {...category} />)
+
+__11
+
+**src/components/PhotoCard/index.js
+
+import React from "react";
+
+import { ImgWrapper, Img, Button } from "./styles";
+
+const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60";
+
+export const PhotoCard = ({
+id, likes = 0, src = DEFAULT_IMAGE
+}) => {
+return (
+article
+a href = { `/detail/${id}` }
+ImgWrapper
+Img src = { src }
+
+Button
+{ likes } likes!
+
+);
+}
+
+**App.js
+
+import { PhotoCard } from "./components/PhotoCard";
+
+..
+<PhotoCard />
+
+**src/components/PhotoCard/styles.js
+
+import styled from "styled-components";
+
+..
