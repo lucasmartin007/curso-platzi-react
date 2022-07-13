@@ -6,13 +6,13 @@ import { useQuery } from '@apollo/client';
 
 import { PhotoCard } from "../PhotoCard";
 
-import { withPhotos } from "../../hoc/withPhotos";
+import { GET_PHOTOS } from "../../hoc/withPhotos";
 
 
 export const ListOfPhotoCardsComponent = (json_categoryid) => {
     const categoryId = json_categoryid.json_id.categoryId;
 
-    const { loading, error, data } = useQuery(withPhotos, { variables: { categoryId } })
+    const { loading, error, data } = useQuery(GET_PHOTOS, { variables: { categoryId } })
 
     if (error) {
         console.log(error);
