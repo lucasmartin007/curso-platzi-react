@@ -249,6 +249,8 @@ import React from "react";
 
 import { ImgWrapper, Img, Button } from "./styles";
 
+import { MdFavoriteBorder } from "react-icons/md";
+
 const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60";
 
 export const PhotoCard = ({
@@ -261,7 +263,7 @@ ImgWrapper
 Img src = { src }
 
 Button
-{ likes } likes!
+<MdFavoriteBorder size = "32" />{ likes } likes!
 
 );
 }
@@ -278,3 +280,419 @@ import { PhotoCard } from "./components/PhotoCard";
 import styled from "styled-components";
 
 ..
+
+>>npm install react-icons
+
+**src/components/ListOfPhotoCards/index.js
+
+import React from "react";
+
+import { PhotoCard } from "../PhotoCard";
+
+export const ListOfPhotoCards = () => {
+ul
+{[1,2,3].map(id => <PhotoCard key = { id } />}
+}
+
+__12
+
+--maketext.io
+
+--jakearchibald.github.io/svgomg
+
+--smooth-code.com/open-source/svgr/playground
+
+**src/components/Logo/index.js
+
+import { Svg } from "./styles";
+
+...
+
+**src/components/Logo/styles.js
+
+import "styled" from "styled-components";
+
+export const Svg = styled.svg`
+width:220px;
+margin-left:-10px;
+margin-top:-30px;
+`;
+
+**src/App.js
+
+..
+Logo
+
+__13
+
+**src/components/PhotoCard/styles.js
+
+import { fadeIn } from "../../styles/animation";
+
+..
+export const Img = styled.img`
+${fadeIn({ time:"5s" })}
+`;
+
+**src/styles/animation.js
+
+import { css, keyframes } from "styled-components";
+
+const fadeIn = ({ time = "1s", type = "ease" } = {}) => css `animation:${time} ${fadeInKeyframes} ${type}`;
+
+const fadeInKeyframes = keyframes`
+from{
+filter:blur(5px);
+opacity:0;
+}
+
+to{
+filter:blur(0);
+opacity:1;
+}
+`;
+
+__14
+
+**src/components/ListOfCategories/index.js
+
+import React, { useEffect, useState } from "react";
+
+import { categories as mockCategories } from "../../../api/db.json";
+
+..
+const [categories, setCategories] = useState([]);
+
+useEffect(function(){
+window.fetch("https://petgram-server-gamma-three.vercel.app/categories")
+.then(res => {
+setCategories(res);
+});
+});
+
+__15
+
+..
+
+const [showFixed, setShowFixed] = useState(false);
+
+useEffect(function(){
+const onScroll = e => {
+const newShowFixed = window.scrollY > 200
+showFixed !== newShowFixed && setShowFixed(newShowFixed)
+}
+
+document.addEventListener("scroll", onScroll);
+});
+
+return () => document.removeEventListener("scroll", onScroll);
+}, [showFixed]);
+
+const renderList = (fixed) => {
+List classname = { fixed ? "fixed":"" }>
+}
+
+return (
+Fragment
+{renderList()}
+{showFixed && renderList(true)}
+)
+
+**styles
+
+&.fixed{
+...
+}
+
+__16
+
+**src/components/ListOfCategories/index.js
+
+function useCategoriesData(){
+const [loading, setLoading] = useState(true);
+
+const [categories, setCategories] = ...;
+
+const [loading, setLoading] = ...;
+
+useEffect(function(){
+setLoading(true);
+..
+setLoading(false);
+} );
+
+return { categories, loading };
+}
+
+..
+const { categories, loading } = useCategoriesData();
+..
+if(loading){
+return "Cargando...";
+}
+..
+List fixed = { fixed }
+{
+loading ? Item key = "loading" Category : categories.map(...)
+}
+
+**src/components/ListOfCategories/styles.js
+
+${ props => props.fixed && css`
+...
+` }
+
+__17
+
+**src/components/ListOfPhotoCards/index.js
+
+..
+{ [1, 2, 3, 4, 5, 6, 7].map(...) }
+
+**src/components/PhotoCard/index.js
+
+..
+const element = useRef(null);
+
+const [show, setShow] = useState(false);
+
+useEffect(function(){
+//console.log(element.current);
+const observer = new window.IntersectionObserver(function(entries){
+const { isIntersecting } = entries[0];
+//console.log(entries);
+//console.log({ isIntercepting });
+if(isIntercepting){
+console.log("Si");
+setShow(true);
+observer.disconnect();
+}
+});
+observer.observe(element.current);
+}, [element]);
+
+return(
+Article ref = { element }
+{
+show && <Fragment>
+}
+
+);
+
+**src/components/PhotoCard/styles.js
+
+..
+export const Article = styled.article`
+min-height:100px;
+`;
+
+__18
+
+>>npm install intersection-observer
+
+**src/components/PhotoCard/index.js
+
+..
+Promise.resolve(
+typeof window.IntersectionObserver !== "undefined" ? window.IntersectionObserver : import("intersection-observer")
+).then(() => {
+...
+});
+
+>>npm install @babel/plugin-syntax-dynamic-import --save-dev
+
+**webpack.config.js
+
+..
+loader babel-loader
+options
+plugins: ["@babel/plugin-syntax-dynamic-import"]
+
+>>npm install babel-eslint --save-dev
+
+**package.json
+
+..
+eslintConfig
+parser: "babel-eslint"
+
+__19
+
+**src/components/PhotoCard/index.js
+
+..
+import { MdFavorite } from "react-icons/md";
+
+..
+const key = `like-${id}`;
+..
+const [liked, setLiked] = useState(() => {
+try{
+const like = window.localStorage.getItem(key);
+return like;
+}catch(error){
+return false;
+}
+});
+..
+console.log(liked);
+..
+const Icon = liked ? MdFavorite : MdFavoriteBorder;
+const setLocalStorage = value => {
+try{
+window.localStorage.setItem(key, value);
+setLiked(value);
+}catch(error){
+console.error(error);
+}
+}
+..
+Button onClick = { () => setLocalStorage(!liked) }
+Icon
+
+**ListOfPhotoCards
+
+..
+PhotoCard key = { id } id = { id }
+
+__20
+
+**PhotoCard
+
+function useLocalStorage(key, initialValue){
+const [storedValue, setValue] = useState(() => {
+try{
+const item = window.localStorage.getItem(key);
+return item !== null ? JSON.parse(item) : initialValue;
+}catch(error){
+return initialValue;
+}
+} );
+
+const setLocalStorage = value => {
+try{
+window.localStorage.setItem(key, JSON.stringify(value));
+setValue(value);
+}catch(error){
+console.error(error);
+}
+}
+return [storedValue, setLocalStorage];
+
+}
+
+..
+const [show, element] = useNearScreen();
+..
+const [liked, setLiked] = useLocalStorage(key, false);
+..
+Button onClick = {() => setLiked(!liked)}
+
+**src/hooks/useLocalStorage.js
+
+export function useLocalStorage(...){...}
+
+**src/hooks/useNearScreen.js
+
+export function useNearScreen(){
+const element = useRef(null);
+const [show, setShow] = useState(false);
+..
+return [show, element];
+}
+
+__21
+
+>>npm install @apollo/client graphql
+
+**index
+
+import ApolloClient from "apollo-boost";
+import { ApolloProvider } from "react-apollo";
+
+..
+const client = new ApolloClient({
+uri:"..."
+});
+
+ReactDOM.render(
+ApolloProvider client = { client }
+App
+);
+
+**ListOfPhotoCards
+
+import { graphql } from "react-apollo";
+import { gql } from "apollo-boost";
+
+const withPhotos = graphql(gql`
+query getPhotos{
+photos{
+id
+categoryId
+src
+likes
+userId
+liked
+}
+}
+`);
+
+const ListOfPhotoCardsComponent = ({ data: { photos = [] } } = {}) => {
+return (
+ul
+photos.map(photo => Photo>Card key = { photo.id } { ...photo })
+);
+}
+
+export const ListOfPhotoCards = withPhotos(ListOfPhotoCardsComponent);
+
+__22
+
+**ListOfPhotoCards
+
+const withPhotos = gql`
+query getPhotos($categoryId: ID){
+photos(categoryId: $categoryID){...}
+}
+`;
+
+**App
+
+ListOfPhotoCards categoryId = { 2 }
+
+**src/hoc/withPhotos.js
+
+...
+
+**src/container/ListOfPhotoCards.js
+
+...
+
+__23
+
+export const App = () => {
+const urlParams = new window.URLSearchParams(window.location.search);
+const detailId = urlParams.get("detail");
+console.log(detailId);
+..
+{
+detailId ? PhotoCardWithQuery id = { detailId } : ...
+}
+}
+
+**src/container/PhotoCardWithQuery.js
+
+const query = gql`
+query getSinglePhoto($id:ID!){
+photo(id:$id){...}
+}
+`;
+
+export const PhotoCardWithQuery = ( { id } ) => (
+Query query = { query } variables = {{ id }}
+{
+({ loading, error, data }) => const { photo = {} } = data
+PhotoCard { ...photo }
+}
+)

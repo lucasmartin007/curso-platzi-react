@@ -1,6 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
+// import ApolloClient from "apollo-boost";
+// import { ApolloProvider } from "react-apollo";
+
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+
 import { App } from "./App";
 
 // console.log("Empezamos. Curso de React");
@@ -12,6 +17,16 @@ import { App } from "./App";
 // const rootElement = document.getElementById('div_app');
 // const root = createRoot(rootElement);
 
-ReactDOM.render(<App />, document.getElementById("div_app"));
+export const client = new ApolloClient({
+    uri:"https://petgram-server-gamma-three.vercel.app/graphql",
+    cache: new InMemoryCache()
+});
+    
+
+ReactDOM.render(
+    <ApolloProvider client = { client }>
+        <App />
+    </ApolloProvider>
+, document.getElementById("div_app"));
 
 // root.render(<App />);
