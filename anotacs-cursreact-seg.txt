@@ -237,3 +237,133 @@ button Iniciar sesion
 )
 }
 }
+
+__33
+
+**components/UserForm
+
+const useInputValue = initialValue => {
+const [value, setValue] = useState(initialValue);
+const onChange = e => setValue(e.target.value);
+
+return {value, onChange}
+}
+
+export const UserForm = ({ onSubmit }) => {
+const email = useInputValue("");
+const password = useInputValue("");
+return(
+input placeholder = "Email" { ...email }
+input type = "password" placeholder = "Password" { ...password }
+button Iniciar sesion
+)
+}
+
+**NotRegisteredUser
+
+..
+return(
+<UserForm onSubmit = { activateAuth } />
+)
+
+**hooks/useInputValue
+
+...
+
+__34
+
+**UserForm/styles
+
+import styled from "styled-components";
+
+export const Form = styled.form`
+padding:16px 0;
+`;
+
+export const Input = styled.input`
+border:1px solid #ccd;
+border-radius:3px;
+margin-bottom:8px;
+padding:8px 4px;
+display:block;
+width:100%;
+`;
+
+export const Button = styled.button`
+background:#8d00ff;
+border-radius:3px;
+color:#fff;
+height:32px;
+display:block;
+width:100%;
+text-align:center;
+`;
+
+export const Title = styled.h2`
+font-size:16px;
+font-weight:500;
+padding:8px 0;
+`;
+
+**UserForm
+
+Fragment
+h2 { title }
+Form
+..
+Input
+..
+Button { title }
+
+**NotRegisteredUser
+
+..
+UserForm title = "Registrarse"
+UserForm title = "Iniciar sesion"
+
+__35
+
+**container/RegisterMutation.js
+
+import { Mutation } from "react-apollo";
+
+import { gql } from "apollo-boost";
+
+const REGISTER = gql`
+mutation signup($input: UserCredentials!){
+signup(input: $input)
+}
+`;
+
+export const RegisterMutation = ({ children }) => {
+return(
+Mutation mutation = { REGISTER }
+{ children }
+)
+}
+
+**NotRegisteredUser
+
+..
+RegisterMutation
+{
+(register) => {
+const onSubmit = ({ email, password }) => {
+const input = { email, password }
+const variables = { input }
+register({ variables }).then(activateAuth)
+}
+return UserForm title = "Registrarse"
+}
+}
+
+**UserForm
+
+..
+const handleSubmit = (event) => {
+event.preventDefault();
+onSubmit({ email: email.value, password: password.value });
+}
+
+..
+Form onSubmit = { handleSubmit }

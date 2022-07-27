@@ -10,10 +10,7 @@ import { NavBar } from "../components/NavBar";
 export const Detail = ({ detailId }) => {
     return(
         <Fragment>
-            <GlobalStyle />
-            <Logo />
             <PhotoCardWithQuery id = { detailId } />
-            <NavBar />
         </Fragment>
     )
 }
