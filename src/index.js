@@ -8,6 +8,8 @@ import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
 import { App } from "./App";
 
+import Context from "./Context";
+
 // console.log("Empezamos. Curso de React");
 
 //ReactDOM.render("Curso de React", document.body);
@@ -24,9 +26,11 @@ export const client = new ApolloClient({
     
 
 ReactDOM.render(
-    <ApolloProvider client = { client }>
-        <App />
-    </ApolloProvider>
+    <Context.Provider>
+        <ApolloProvider client = { client }>
+            <App />
+        </ApolloProvider>
+    </Context.Provider>
 , document.getElementById("div_app"));
 
 // root.render(<App />);

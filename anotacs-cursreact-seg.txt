@@ -1,0 +1,239 @@
+__
+
+**src/pages/Home.js
+
+...
+
+**App
+
+import { Router } from "@reach/router";
+
+..
+Router
+Home path = "/"
+Home path = "/pet/:id"
+
+>>npm install @reach/router
+
+**ListOfCategories
+
+..
+Category { ...category } path = { `/pet/${ category.id }` }
+
+**package.json
+
+..
+"dev":"webpack-dev-server --history-api-fallback"
+
+**webpack.config.js
+
+..
+publicPath: "/"
+
+__27
+
+**Home
+
+..
+categoryId
+
+**Category/styles.js
+
+..
+import { Link as LinkRouter } from "@reach/router";
+
+..
+export const Link = styled(LinkRouter)`...`;
+
+**Category
+
+..
+export const Category = ({ cover = DEFAULT_IMAGE, path = "#", emoji = "?" }) => return(
+Link to = { path }
+...
+)
+
+**Logo
+
+import { Link } from "@reach/router";
+
+export const Logo = props => {
+return(
+Link to = "/"
+...
+);
+}
+
+__28
+
+**App
+
+..
+Detail path = "/detail/:detailId"
+
+**pages/Detail
+
+export const Detail = () => {
+return(
+PhotoCardWithQuery id = { detailId }
+)
+}
+
+*PhotoCard
+
+..
+Link to = { `/detail/${ id }` }
+
+__29
+
+**components/NavBar
+
+import { MdHome, MdFavouriteBorder, MdPersonOutline } from "react-icons/md";
+
+const SIZE = "32px";
+
+export const NavBar = () => {
+return (
+Nav
+Link to = "/" MdHome size = { SIZE }
+Link to = "/favs" MdFavouriteBorder size = { SIZE }
+Link to = "/user" MdPersonOutline size = { SIZE }
+)
+}
+
+**App
+
+..
+NavBar
+
+**NavBar/styles.js
+
+export const Nav = styled.nav`
+...
+`;
+
+export const Link = styled(LinkRouter)`
+...
+`;
+
+__30
+
+**NavBar/styles.js
+
+..
+import { fadeIn } from "../../styles/animation";
+
+..
+Link
+..
+&[aria-current]{
+color:#000;
+&:after{
+${fadeIn({ time: "0.5s" })};
+content:"·";
+position:absolute;
+bottom:0;
+font-size:34px;
+line-height:20px;
+}
+}
+
+__31
+
+**pages/Favs.js
+
+export const Favs = () => {
+return(
+h1 Favs
+)
+}
+
+**pages/User.js
+
+export const User = () => {
+return(
+h1 User
+)
+}
+
+**pages/NotRegisteredUser.js
+
+export const NotRegisteredUser = () => {
+return(
+h1 NotRegisteredUser
+)
+}
+
+**App
+
+..
+const UserLogged = ({ children }) => {
+return children({ isAuth:false })
+}
+
+..
+UserLogged
+{
+({ isAuth }) => isAuth ? (
+Router
+Favs path = "/favs"
+User path = "/user"
+) : (
+Router
+NotRegisteredUser path = "/favs"
+NotRegisteredUser path = "/user"
+)
+}
+
+__32
+
+**src/Context.js
+
+const Context = createContext();
+
+const Provider = ({ children }) => {
+const [isAuth, setIsAuth] = useState(false);
+const value = {
+isAuth,
+activateAuth:() => {
+setIsAuth(true)
+}
+}
+
+return(
+Context.Provider value = { value }
+{ children }
+)
+
+}
+
+export default {
+Context,
+Consumer: Context.Consumer
+}
+
+**index.js
+
+..
+import Context from "./src/Context";
+
+..
+Context.Provider
+
+**App
+
+..
+Context.Consumer
+...
+
+**NotRegisteredUser
+
+Context.Consumer
+{
+({ isAuth, activateAuth }) => {
+return (
+form onSubmit = { activateAuth }
+button Iniciar sesion
+)
+}
+}

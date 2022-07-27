@@ -754,35 +754,3 @@ export const ToggleLikeMutation = ({ children }) => {
 return Mutation mutation = { LIKE_PHOTO }
 { children }
 }
-
-__26
-
-**src/pages/Home.js
-
-...
-
-**App
-
-import { Router } from "@reach/router";
-
-..
-Router
-Home path = "/"
-Home path = "/pet/:id"
-
->>npm install @reach/router
-
-**ListOfCategories
-
-..
-Category { ...category } path = { `/pet/${ category.id }` }
-
-**package.json
-
-..
-"dev":"webpack-dev-server --history-api-fallback"
-
-**webpack.config.js
-
-..
-publicPath: "/"
