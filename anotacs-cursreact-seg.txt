@@ -367,3 +367,467 @@ onSubmit({ email: email.value, password: password.value });
 
 ..
 Form onSubmit = { handleSubmit }
+
+__36
+
+**NotRegisteredUser
+
+..
+RegisterMutation
+{
+(register, { data, loading, error }) => {
+..
+const errorMessage = error && "El usuario ya existe o hay algun problema.";
+
+return UserForm disabled = { loading } error = { errorMessage } title = "Registrarse" onSubmit = { onSubmit }
+}
+}
+
+**UserForm
+
+..
+export const UserForm = ({ error, disabled, onSubmit, title }) => {
+..
+Form disabled = { disabled }
+Title { title }
+Input disabled = { disabled }
+Button disabled = { disabled }
+..
+{ error && Error { error } }
+}
+
+**UserForm/styles.js
+
+..
+Input
+&[ disabled ]{
+opacity:.3;
+}
+Button
+&[ disabled ]{
+opacity:.3;
+}
+..
+export const Error = styled.span`
+color:red;
+font-size:14px;
+`;
+
+__37
+
+**container/LoginMutation.js
+
+const LOGIN = gql`
+mutation login($input: UserCredentials!){
+login(input: $input)
+}
+`;
+
+.. LoginMutation
+.. LOGIN
+
+**NotRegisteredUser
+
+LoginMutation
+{
+(login, { data, loading, error }) => {
+..
+login({ variables }).then(...)
+}
+..
+const errorMessage = error && "La contraseña no es correcta o el usuario no existe";
+.. title = "Iniciar sesion"
+}
+
+__38
+
+**NotRegisteredUser
+
+..
+export const NotRegisteredUser = () => {
+const { activateAuth } = useContext(Context);
+..
+register({ variables }).then(({ data }) => {
+const { signup } = data
+activateAuth(signup)
+})
+..
+login({ variables }).then(({ data }) => {
+const { login } = data
+activateAuth(login)
+})
+
+**Context
+
+..
+export const Context = createContext();
+..
+const [isAuth, setIsAuth] = useState(() => {
+return window.sessionStorage.getItem("token");
+});
+..
+activateAuth:token => {
+setIsAuth(true);
+window.sessionStorage.setItem("token", token);
+}
+
+__39
+
+**container/ToggleLikeMutation
+
+..
+const LIKE_PHOTO = gql`
+.. likePhoto(...){
+likePhoto..
+}
+`;
+
+**index.js
+
+.. client = ..({
+uri:"...",
+request: operation => {
+const token = window.sessionStorage.getItem("token")
+const authorization = token ? `Bearer ${ token }` : "";
+operation.setContext({
+headers:{
+authorization
+}
+})
+},
+onError: error => {
+const { networkError } = error;
+if(networkError && networkError.result.code === "invalid_token"){
+window.sessionStorage.removeItem("token");
+window.location.href = "/";
+}
+}
+})
+
+**PhotoCard
+
+..
+.. PhotoCard = ({ id, liked, likes = 0, src = DEFAULT_IMAGE }) => {
+..
+(toggleLike) => {
+const handleFavClick = () => {
+toggleLike({ variables: {
+input: { id }
+}} )
+}
+
+}
+
+__40
+
+**container/GetFavourites
+
+const GET_FAVS = gql`
+query getFavs{
+favs{
+id
+categoryId
+src
+likes
+userId
+}
+}
+`;
+
+const renderProp = ({ loading, error, data }) => {
+...
+const { favs } = data
+
+return ListOfFavs favs = { favs }
+}
+
+export const FavsWithQuery = () => (
+Query query = { GET_FAVS } fetchPolicy = "network-only"
+{ renderProp }
+)
+
+**pages/Favs
+
+export const Favs = () => {
+return(
+h1 Favs
+FavsWithQuery
+)
+}
+
+**components/ListOfFavs
+
+export const ListOfFavs = ({ favs = []  }) => {
+return(
+Grid
+{
+favs.map(fav => 
+Link key = { fav.id } to = { `/detail/${ fav.id }` }
+Image src = { fav.src }
+}
+)
+}
+
+**ListOfFavs/styles.js
+
+...
+
+__41
+
+**Context
+
+..
+removeAuth: () => {
+setIsAuth(false);
+window.sessionStorage.removeItem("token");
+}
+
+**pages/User
+
+export const User = () => {
+const { removeAuth } = useContext(Context);
+return(
+Fragment
+h1 User
+SubmitButton onClick = {removeAuth } Cerrar sesion
+)
+}
+
+**components/SubmitButton
+
+export const SubmitButton = ({ children, disabled, onClick }) => {
+return Button disabled = { disabled } onClick = { onClick } { children }
+}
+
+**SubmitButton/styles
+
+...
+
+**UserForm
+
+..
+SubmitButton
+
+__42
+
+**App
+
+..
+const { isAuth } = useContext(Contexto);
+..
+NotFound default
+..
+{ !isAuth && NotRegisteredUser path = "/login" }
+{ !isAuth && Redirect from = "/favs" to = "/login" }
+{ !isAuth && Redirect from = "/user" to = "/login" }
+{ isAuth && Redirect from = "/login" to = "/" }
+Favs path = "/favs"
+User path = "/user"
+
+**pages/NotFound
+
+export const NotFound = () => {
+return(
+h1 Esta pagina no existe
+)
+}
+
+__43
+
+>>npm install react-helmet
+
+**pages/Home
+
+..
+Layout title = "Petgram - App de fotos de mascotas" subtitle = "Con Petgram puedes encontrar fotos de animales domesticos"
+
+**pages/Favs
+
+Layout title = "Petgram - Tus favoritos" subtitle = "Aca puedes encontrar tus favoritos"
+
+**components/Layout
+
+..
+import { Helmet } from "react-helmet";
+export const Layout = ({ children, title, subtitule }) => {
+return(
+Fragment
+Helmet
+{ title && title { title } | Petgram }
+{ subtitle && meta name = "description" content = { subtitle } }
+Div
+{ title && Title { title } }
+{ subtitle && Subtitle { subtitle } }
+{ children }
+)
+}
+
+**Layout/styles
+
+...
+
+**pages/Detail
+
+..
+Layout title = { `Fotografia ${ detailId }` }
+
+__44
+
+>>npx serve dist -s
+
+**ListOfCategories
+
+..
+export const ListCategories = React.memo(ListOfCategoriesComponent);
+
+**package.json
+
+..
+"serve:dev": "webpack --mode 'development' && npx serve dist -s"
+
+**pages/Home
+
+..
+export const Home = React.memo(HomePage, (prevProps, props) => {
+return prevProps.categoryId === props.categoryId
+})
+
+__45
+
+**App
+
+..
+const Favs = React.lazy(() => import("./pages/Favs"));
+..
+Suspense fallback = { div }
+
+**pages/Favs
+
+..
+export default ...
+
+__46
+
+>>npm install prop-types
+
+**FavButton
+
+..
+FavButton.propTypes = {
+liked: PropTypes.bool.isRequired,
+likes: PropType.number.isRequired,
+onClick: PropType.func.isRequired
+}
+
+**ListOfFavs
+
+..
+ListOfFavs.propTypes = {
+favs:PropTypes.arrayOf(
+PropTypes.shape({
+id:PropTypes.string.isRequired,
+src:PropTypes.string.isRequired
+})
+)
+}
+
+**SubmitButton
+
+..
+SubmitButton.propTypes = {
+disabled: PropTypes.bool,
+onClick: PropTypes.func,
+children: PropTypes.node.isRequired
+}
+
+**PhotoCard
+
+..
+PhotoCard.propTypes = {
+id: PropTypes.string.isRequired,
+liked: PropTypes.bool.isRequired,
+src: PropTypes.string.isRequired,
+likes: function(props, propName, componentName){
+const propValue = props[propName];
+if(propValue === undefined){
+return new Error(`${ propName } value must be defined`);
+}
+if(propValue < 0){
+return new Error(`${ propName } value must be greater or equal 0`);
+}
+}
+}
+
+__47
+
+**index.html
+
+..
+noscript h3 Esta app necesita Javascript para anunciar
+
+>>npm install webpack-pwa-manifest -D
+
+**webpack.config.js
+
+..
+const WebpackPwaManifestPlugin = require("webpack-pwa-manifest");
+..
+plugins: [
+...
+new WebpackPwaManifestPlugin({
+name: "Petgram - Tu app de fotos de mascotas",
+shortname: "Petgram",
+description: "Con Petgram puedes encontrar fotos de animales domesticos",
+background_color: "#fff",
+theme_color: "b1a",
+icons:[
+{
+src: path.resolve("src/assets/icon.png"),
+sizes: [96, 128, 192, 256, 384, 512]
+}
+]
+})
+
+__48
+
+>>npm install workbox-webpack-plugin -D
+
+**webpack.config.js
+
+..
+const WorkboxWebpackPlugin = require("workbox-webpack-plugin");
+..
+new WorkboxWebpackPlugin.GenerateSW({
+runtimeCaching:[
+{
+urlPattern: new RegExp("https://(res.cloudinary.com|images.unsplash.com)"),
+handler: "cacheFirst",
+options:{
+cacheName: "images"
+}
+},
+{
+urlPattern: new RegExp("https://petgram-server-gamma-three.vercel.app"),
+handler: "networkFirst",
+options:{
+cacheName: "api"
+}
+}
+]
+});
+
+**index.html
+
+..
+script
+if("serviceWorker" in navigator){
+window.addEventListener("load", function(){
+navigator.serviceWorker.register("/service-worker.js")
+.then(registration => {
+console.log("SW registrado");
+})
+.catch(registrationError => {
+console.log("SW error", registrationError);
+})
+})
+}

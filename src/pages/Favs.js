@@ -1,9 +1,12 @@
-import React from "react";
+import React, { Fragment } from "react";
+import { Layout } from "../components/Layout";
+import { FavsWithQuery } from "../container/GetFavourites";
 
-export const Favs = () => {
+export default () => {
     return(
-        <h1>
-            Favs
-        </h1>
+        <Fragment>
+            <Layout title = "Petgram - Tus favoritos" subtitle = "Aca puedes encontrar tus favoritos" />
+            <FavsWithQuery />
+        </Fragment>
     )
 }

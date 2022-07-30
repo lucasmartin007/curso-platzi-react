@@ -1,5 +1,7 @@
 import React, { Fragment, useRef, useState, useEffect } from "react";
 
+import PropTypes from "prop-types";
+
 import { ImgWrapper, Img, Article } from "./styles";
 
 import { useLocalStorage } from "../../hooks/useLocalStorage";
@@ -14,7 +16,7 @@ import { Link } from "@reach/router";
 const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60";
 
 export const PhotoCard = ({
-    id, likes = 0, src = DEFAULT_IMAGE
+    id, liked, likes = 0, src = DEFAULT_IMAGE
 }) => {
     // const element = useRef(null);
 
@@ -22,7 +24,7 @@ export const PhotoCard = ({
 
     const [show, element] = useNearScreen();
 
-    const key = `like-${id}`;
+    // const key = `like-${id}`;
 
     // const [liked, setLiked] = useState(() => {
     //     try{
@@ -33,7 +35,7 @@ export const PhotoCard = ({
     //     }
     // });
 
-    const [liked, setLiked] = useLocalStorage(key, false);
+    // const [liked, setLiked] = useLocalStorage(key, false);
 
     // console.log(liked);
 
@@ -82,10 +84,9 @@ export const PhotoCard = ({
                 {
                     (toggleLike) => {
                         const handleFavClick = () => {
-                            !liked && toggleLike({ variables: { 
+                            toggleLike({ variables: { 
                                 input: { id } 
                             } })
-                            setLiked(!liked)
                         } 
                         return <FavButton liked = { liked } likes = { likes } onClick = { handleFavClick } />
                     }
@@ -97,4 +98,19 @@ export const PhotoCard = ({
         </Article>
 
     );
+}
+
+PhotoCard.propTypes = {
+    id: PropTypes.string.isRequired,
+    liked: PropTypes.bool.isRequired,
+    src: PropTypes.string.isRequired,
+    likes: function(props, propName, componentName){
+        const propValue = props[propName];
+        if(propValue === undefined){
+            return new Error(`${ propName } value must be defined`);
+        }
+        if(propValue < 0){
+            return new Error(`${ propName } value must be greater or equal 0`);
+        }
+    }
 }
