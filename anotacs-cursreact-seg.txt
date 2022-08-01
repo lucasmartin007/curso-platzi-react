@@ -831,3 +831,61 @@ console.log("SW error", registrationError);
 })
 })
 }
+
+__
+
+>>now
+
+**now.json
+
+..
+{
+"src": "(.*).png", "dest": "/$1.png"
+}
+
+>>npm install cypress -D
+
+>>./node_modules/.bin/cypress open
+
+**package.json
+
+..
+"scripts":{
+..
+"serve:dev": "webpack --mode development && npx serve dist -s",
+"test": "cypress open"
+}
+
+**cypress/integration/petgram/test_spec.js
+
+/* global describe, it, cy */
+describe("Petgram", function(){
+it("para ver si la app funciona", function(){
+cy.visit("/")
+} )
+
+it("navegamos a una categoria y vemos fotos", function(){
+cy.visit("pet/1")
+cy.get("article")
+} )
+
+it("si podemos navegar con la navbar a la home", function(){
+cy.visit("pet/1")
+cy.get("nav a").first().click()
+cy.url().should("include", "/")
+} )
+
+it("los usuarios no registrados ven el formulario de registro e inicio de sesion al ir a favs", function(){
+cy.visit("favs/")
+cy.get("form").should("have.length", 2)
+} )
+} )
+
+**cypress.json
+
+{
+"baseUrl": "https://petgram.midudev.now.sh/",
+"chromeWebSecurity": false,
+"viewportWidth": 500,
+"viewportHeight": 800
+}
